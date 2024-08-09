@@ -6,4 +6,9 @@
     border-radius: 5px;
     background-color: #f9f9f9;
   }
-  
+  .profile-image {
+    max-width: 150px;  /* Establece el ancho máximo de la imagen */
+    max-height: 150px; /* Establece la altura máxima de la imagen */
+    border-radius: 50%; /* Haz la imagen circular si lo deseas */
+    object-fit: cover;  /* Mantén la proporción de la imagen y recorta si es necesario */
+  }

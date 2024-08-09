@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchRandomSong } from '../api';
+import { fetchRandomSong } from '../api'; // Asegúrate de que esta función devuelva la canción correcta
 import Navbar from './Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/WelcomePage.css';
@@ -11,6 +11,7 @@ const WelcomePage = () => {
     const getRandomSong = async () => {
       try {
         const randomSong = await fetchRandomSong();
+        console.log('Fetched song:', randomSong); // Verifica los datos recibidos
         setSong(randomSong);
       } catch (error) {
         console.error('Error fetching random song:', error);

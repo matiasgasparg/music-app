@@ -8,10 +8,12 @@ import '../CSS/Profile.css';
 const Profile = () => {
   const { currentUser } = useAuth();
   const [profile, setProfile] = useState({
+    user__id: '',
     username: '',
     email: '',
     first_name: '',
     last_name: '',
+    image: null,
   });
   const [isEditing, setIsEditing] = useState(false);
 
@@ -35,10 +37,26 @@ const Profile = () => {
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setProfile((prevProfile) => ({ ...prevProfile, image: file }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await updateProfile(currentUser.id, profile);
+      const formData = new FormData();
+      formData.append('username', profile.username);
+      formData.append('email', profile.email);
+      formData.append('first_name', profile.first_name);
+      formData.append('last_name', profile.last_name);
+      if (profile.image) {
+        formData.append('image', profile.image); // Agrega la imagen si está presente
+      }
+
+      // Envía los datos del perfil, incluyendo la imagen si está presente
+      await updateProfile(profile.user__id, formData);
+
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -52,7 +70,7 @@ const Profile = () => {
         <h1 className="text-center">Profile</h1>
         <div className="profile-card mt-4">
           {isEditing ? (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
               <div className="mb-3">
                 <label htmlFor="username" className="form-label">Username</label>
                 <input
@@ -97,11 +115,28 @@ const Profile = () => {
                   onChange={handleChange}
                 />
               </div>
+              <div className="mb-3">
+                <label htmlFor="image" className="form-label">Profile Image</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="image"
+                  name="image"
+                  onChange={handleImageChange}
+                />
+              </div>
               <button type="submit" className="btn btn-primary">Save</button>
               <button type="button" className="btn btn-secondary ms-2" onClick={() => setIsEditing(false)}>Cancel</button>
             </form>
           ) : (
             <div>
+              {profile.image && (
+                <img 
+                  src={`https://sandbox.academiadevelopers.com${profile.image}`} 
+                  alt="Profile" 
+                  className="profile-image" 
+                />
+              )}
               <p><strong>Username:</strong> {profile.username}</p>
               <p><strong>Email:</strong> {profile.email}</p>
               <p><strong>First Name:</strong> {profile.first_name}</p>

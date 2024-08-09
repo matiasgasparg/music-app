@@ -11,12 +11,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = (user) => {
     setCurrentUser(user);
-    localStorage.setItem('token', user.token); // Ajusta esto según cómo manejes los tokens.
+    localStorage.setItem('Token', user.token); // Ajusta esto según cómo manejes los tokens.
   };
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('token');
+    localStorage.removeItem('Token');
   };
 
   const value = {
