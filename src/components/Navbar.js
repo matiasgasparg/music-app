@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from '../contexts/AuthContext'; // Importa useAuth para obtener el estado de autenticación
 
 const Navbar = () => {
+  const { currentUser } = useAuth(); // Obtiene el usuario actual desde el contexto de autenticación
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -22,8 +25,19 @@ const Navbar = () => {
               <Link className="nav-link" to="/profile">Profile</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/logout">Logout</Link>
+              <Link className="nav-link" to="/AlbumList">Albums</Link>
             </li>
+
+            {currentUser ? (
+              <li className="nav-item">
+                <Link className="nav-link" to="/logout">Logout</Link>
+              </li>
+
+            ) : (
+              <li className="nav-item">
+                <Link className="nav-link" to="/login">Login</Link>
+              </li>
+            )}
           </ul>
         </div>
       </div>

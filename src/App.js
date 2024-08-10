@@ -13,6 +13,7 @@ import Logout from './components/Logout';
 import NotFound from './components/NotFound';
 import Navbar from './components/Navbar';
 import WelcomePage from './components/WelcomePage'
+import AlbumList from './components/AlbumList';
 
 function App() {
   const [auth, setAuth] = useState(false);
@@ -26,20 +27,22 @@ function App() {
 
   return (
     <AuthProvider>
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login setAuth={setAuth} />} />
-        <Route path="/profile" element={<PrivateRoute component={Profile} auth={auth} />} />
-        <Route path="/songs/:id" element={<PrivateRoute component={SongDetail} auth={auth} />} />
-        <Route path="/songs" element={<PrivateRoute component={MusicList} auth={auth} />} />
-        <Route path="/artists" element={<PrivateRoute component={ArtistList} auth={auth} />} />
-        <Route path="/logout" element={<Logout setAuth={setAuth} />} />
-        <Route exact path="/" element={<WelcomePage />} />
-        <Route path="*" element={<NotFound />} /> 
-      </Routes>
-    </Router>
-  </AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/profile" element={<PrivateRoute component={Profile} />} />
+          <Route path="/songs/:id" element={<PrivateRoute component={SongDetail} />} />
+          <Route path="/songs" element={<PrivateRoute component={MusicList} />} />
+          <Route path="/artists" element={<PrivateRoute component={ArtistList} />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/AlbumList" element={<PrivateRoute component={AlbumList} />} />
+
+          <Route exact path="/" element={<WelcomePage />} />
+          <Route path="*" element={<NotFound />} /> 
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
-
 export default App;

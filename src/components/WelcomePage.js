@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { fetchRandomSong } from '../api'; // Asegúrate de que esta función devuelva la canción correcta
-import Navbar from './Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/WelcomePage.css';
 
@@ -23,7 +22,6 @@ const WelcomePage = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="container mt-5">
         <h1 className="text-center">Welcome to Music App</h1>
         <div className="player-container mt-4">

@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import AddArtistModal from './AddArtistModal'; // Ajusta la ruta según tu estructura de carpetas
-import defaultArtistImg from '../Resources/assets/images/default-artist.jpg';
+import AddAlbumModal from './AddAlbumModal'; // Ajusta la ruta según tu estructura de carpetas
+import defaultAlbumCover from '../Resources/assets/images/default-album.jpg'; // Asegúrate de tener una imagen por defecto para los álbumes
 
-const ArtistList = () => {
-  const [artists, setArtists] = useState([]);
+const AlbumList = () => {
+  const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    const fetchArtists = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await api.get(`/artists/?page=${currentPage}`);
-        setArtists(response.data.results);
-        setTotalPages(Math.ceil(response.data.count / 10));
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching artists:', error);
-        setError('Failed to fetch artists.');
-        setLoading(false);
-      }
-    };
+  // Función para obtener la lista de álbumes
+  const fetchAlbums = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/albums/?page=${currentPage}`);
+      setAlbums(response.data.results);
+      setTotalPages(Math.ceil(response.data.count / 10));
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching albums:', error);
+      setError('Failed to fetch albums.');
+      setLoading(false);
+    }
+  };
 
-    fetchArtists();
+  useEffect(() => {
+    fetchAlbums(); // Llama a fetchAlbums al montar el componente y al cambiar de página
   }, [currentPage]);
 
   const handlePageChange = (newPage) => {
@@ -40,14 +41,20 @@ const ArtistList = () => {
     setShowModal(!showModal);
   };
 
-  const handleArtistAdded = async () => {
+  const handleAddAlbum = async (formData) => {
     try {
-      const response = await api.get(`/artists/?page=${currentPage}`);
-      setArtists(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 10));
+      await api.post('/albums/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      // Actualiza la lista de álbumes después de agregar uno nuevo
+      await fetchAlbums();
+      handleModalToggle(); // Cierra el modal
+      alert('Álbum agregado con éxito');
     } catch (error) {
-      console.error('Error fetching artists after adding new artist:', error);
-      setError('Failed to update artist list.');
+      console.error('Error agregando álbum:', error);
+      alert('Error agregando álbum');
     }
   };
 
@@ -63,22 +70,22 @@ const ArtistList = () => {
     <div>
       <div className="container mt-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="text-center">Artist List</h1>
+          <h1 className="text-center">Album List</h1>
           <button className="btn btn-primary" onClick={handleModalToggle}>Agregar</button>
         </div>
         <ul className="list-group">
-          {artists.map((artist) => (
-            <li key={artist.id} className="list-group-item">
+          {albums.map((album) => (
+            <li key={album.id} className="list-group-item">
               <div className="d-flex align-items-center">
                 <img
-                  src={artist.image ? artist.image : defaultArtistImg}
-                  alt={artist.name}
-                  style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '50%' }}
+                  src={album.cover ? album.cover : defaultAlbumCover}
+                  alt={album.title}
+                  style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '10px' }}
                   className="me-3"
                 />
                 <div>
-                  <h5 className="mb-1">{artist.name}</h5>
-                  <small className="text-muted">{artist.bio || 'No bio available'}</small>
+                  <h5 className="mb-1">{album.title}</h5>
+                  <small className="text-muted">Año: {album.year || 'No year available'}</small>
                 </div>
               </div>
             </li>
@@ -108,16 +115,16 @@ const ArtistList = () => {
         </nav>
       </div>
 
-      {/* Modal para agregar artista */}
+      {/* Modal para agregar álbum */}
       {showModal && (
-        <AddArtistModal
+        <AddAlbumModal
           showModal={showModal}
           handleModalToggle={handleModalToggle}
-          handleArtistAdded={handleArtistAdded} // Pasar la función para actualizar la lista
+          handleAddAlbum={handleAddAlbum}
         />
       )}
     </div>
   );
 };
 
-export default ArtistList;
+export default AlbumList;

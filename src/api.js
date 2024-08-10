@@ -89,5 +89,43 @@ export const updateProfileImage = async (url, formData) => {
     throw error;
   }
 };
-
+export const createArtist = async (formData) => {
+  try {
+    const response = await api.post('/artists/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating artist:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+export const addAlbum = async (formData) => {
+  try {
+    const response = await api.post('/albums/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error adding album:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+export const uploadSong = async (formData) => {
+  try {
+    const response = await api.post('/songs/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error uploading song:', error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
 export default api;

@@ -65,7 +65,6 @@ const Profile = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="container mt-5">
         <h1 className="text-center">Profile</h1>
         <div className="profile-card mt-4">
