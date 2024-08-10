@@ -28,10 +28,10 @@ const MusicList = () => {
         const response = await api.get(`/songs/?page=${currentPage}`);
         setSongs(response.data.results);
         setTotalPages(Math.ceil(response.data.count / 10));
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching songs:', error);
         setError('Failed to fetch songs.');
+      } finally {
         setLoading(false);
       }
     };
@@ -109,7 +109,11 @@ const MusicList = () => {
 
         {/* Resultados de búsqueda o lista de canciones */}
         <ul className="list-group">
-          {searchResults.length > 0 ? (
+          {loading ? (
+            <li className="list-group-item">Cargando canciones...</li>
+          ) : error ? (
+            <li className="list-group-item text-danger">{error}</li>
+          ) : searchResults.length > 0 ? (
             searchResults.map((song) => (
               <li key={song.id} className="list-group-item">
                 <div className="d-flex justify-content-between align-items-center">
