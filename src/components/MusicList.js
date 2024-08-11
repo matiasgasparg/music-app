@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+
+
 import { Link } from 'react-router-dom';
 import UploadSongModal from './UploadSongModal';
 import SearchSongModal from './SearchSongModal';
 import SearchModalPlayList from './SearchModalPlayList';
+import CreatePlaylistModal from './CreatePlaylist'
 import api from '../api';
 
 const MusicList = () => {
@@ -15,6 +17,7 @@ const MusicList = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showPlayListModal, setShowPlayListModal] = useState(false);
+  const[showCreatePlayList,setShowCreatePlayList]=useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedSongId, setSelectedSongId] = useState(null);
   const audioRef = useRef(null);
@@ -78,7 +81,7 @@ const MusicList = () => {
   const handleUploadModalToggle = () => setShowUploadModal(!showUploadModal);
   const handleSearchModalToggle = () => setShowSearchModal(!showSearchModal);
   const handlePlayListModalToggle = () => setShowPlayListModal(!showPlayListModal);
-
+  const handleCreatePlaylistToggle= ()=>setShowCreatePlayList(!showCreatePlayList);
   const handleSearchResults = (results) => setSearchResults(results);
 
   const handleRewind = () => {
@@ -108,10 +111,12 @@ const MusicList = () => {
       <div className="container mt-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1 className="text-center">Music List</h1>
-          <button className="btn btn-primary" onClick={handleUploadModalToggle}>Agregar</button>
+          <div>
+            <button className="btn btn-primary me-2" onClick={handleUploadModalToggle}>Agregar</button>
+            <button className="btn btn-secondary me-2" onClick={handleSearchModalToggle}>Buscar Canciones</button>
+            <button className="btn btn-warning me-2" onClick={handleCreatePlaylistToggle}>Crear Playlist</button>
+          </div>
         </div>
-
-        <button className="btn btn-secondary mb-3" onClick={handleSearchModalToggle}>Buscar Canciones</button>
 
         {/* Mensaje de error */}
         {error && (
@@ -228,8 +233,9 @@ const MusicList = () => {
       <audio ref={audioRef} />
 
       <UploadSongModal showModal={showUploadModal} handleModalToggle={handleUploadModalToggle} />
-      <SearchSongModal showModal={showSearchModal} handleModalToggle={handleSearchModalToggle} handleSearchResults={handleSearchResults} />
-      <SearchModalPlayList showModal={showPlayListModal} handleModalToggle={handlePlayListModalToggle} songId={selectedSongId} handleSelectPlaylist={handleSelectPlaylist} />
+      <SearchSongModal showModal={showSearchModal} handleModalToggle={handleSearchModalToggle} />
+      <SearchModalPlayList showModal={showPlayListModal} handleModalToggle={handlePlayListModalToggle} songId={selectedSongId} />
+      <CreatePlaylistModal showModal={showCreatePlayList} handleModalToggle={handleCreatePlaylistToggle} />
     </div>
   );
 };

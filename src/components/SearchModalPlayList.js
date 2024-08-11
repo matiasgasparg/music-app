@@ -6,10 +6,12 @@ const SearchModalPlayList = ({ showModal, handleModalToggle, handleSelectPlaylis
   const [allPlaylists, setAllPlaylists] = useState([]); // Almacena todas las playlists para búsqueda
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+  const [loading, setLoading] = useState(false); // Estado de carga
 
   useEffect(() => {
     if (showModal) {
       const fetchPlaylists = async () => {
+        setLoading(true); // Inicia la carga
         console.log('ID DE LA CANCION DENTRO DEL MODAL:', songId); // Verifica que la ID se pasa correctamente
 
         let playlistsList = [];
@@ -30,6 +32,7 @@ const SearchModalPlayList = ({ showModal, handleModalToggle, handleSelectPlaylis
 
         setPlaylists(playlistsList);
         setAllPlaylists(playlistsList); // Almacena todas las playlists para búsqueda
+        setLoading(false); // Termina la carga
       };
 
       fetchPlaylists();
@@ -75,29 +78,39 @@ const SearchModalPlayList = ({ showModal, handleModalToggle, handleSelectPlaylis
             <button type="button" className="btn-close" onClick={handleModalToggle}></button>
           </div>
           <div className="modal-body">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="form-control"
-              placeholder="Buscar playlist"
-            />
-            {searchTerm && (
-              <ul className="list-group mt-2">
-                {filteredPlaylists.length ? (
-                  filteredPlaylists.map((playlist) => (
-                    <li
-                      key={playlist.id}
-                      className={`list-group-item ${selectedPlaylist?.id === playlist.id ? 'active' : ''}`}
-                      onClick={() => handleSelect(playlist)}
-                    >
-                      {playlist.name}
-                    </li>
-                  ))
-                ) : (
-                  <li className="list-group-item">No se encontraron playlists</li>
+            {loading ? (
+              <div className="text-center">
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="form-control"
+                  placeholder="Buscar playlist"
+                />
+                {searchTerm && (
+                  <ul className="list-group mt-2">
+                    {filteredPlaylists.length ? (
+                      filteredPlaylists.map((playlist) => (
+                        <li
+                          key={playlist.id}
+                          className={`list-group-item ${selectedPlaylist?.id === playlist.id ? 'active' : ''}`}
+                          onClick={() => handleSelect(playlist)}
+                        >
+                          {playlist.name}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="list-group-item">No se encontraron playlists</li>
+                    )}
+                  </ul>
                 )}
-              </ul>
+              </>
             )}
           </div>
         </div>
