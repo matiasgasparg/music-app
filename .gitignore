@@ -25,3 +25,4 @@ build/
 firebase.json
 .firebaserc
 .env
+.firebase
