@@ -1,0 +1,15 @@
+/* Asegúrate de que este archivo esté correctamente importado en Login.js */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .card {
+    width: 20rem;
+    margin-top: 1rem; /* Espacio superior para separarlo del navbar */
+  }
+  

@@ -1,33 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import UploadSongModal from './UploadSongModal';
 import SearchSongModal from './SearchSongModal';
+import SearchModalPlayList from './SearchModalPlayList';
+import api from '../api';
 
 const MusicList = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [songs, setSongs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showPlayListModal, setShowPlayListModal] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [selectedSongId, setSelectedSongId] = useState(null);
   const audioRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [volume, setVolume] = useState(1);
 
+  const fetchSongs = async (page) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.get(`/songs/?page=${page}`);
+      const validSongs = response.data.results.filter(song => song && song.song_file); // Filtrar canciones válidas
+      setSongs(validSongs);
+      setTotalPages(Math.ceil(response.data.count / 10));
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching Songs:', error);
+      setError('Failed to fetch Songs.');
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchSongs(currentPage);
   }, [currentPage]);
-
-  const fetchSongs = async (page) => {
-    try {
-      const response = await axios.get(`https://sandbox.academiadevelopers.com/harmonyhub/songs/?page=${page}`);
-      setSongs(response.data.results);
-      setTotalPages(Math.ceil(response.data.count / 10));
-    } catch (error) {
-      console.error('Error fetching songs:', error);
-    }
-  };
 
   const handlePlayPause = (song) => {
     if (isPlaying && audioRef.current.src === song.song_file) {
@@ -64,6 +77,7 @@ const MusicList = () => {
 
   const handleUploadModalToggle = () => setShowUploadModal(!showUploadModal);
   const handleSearchModalToggle = () => setShowSearchModal(!showSearchModal);
+  const handlePlayListModalToggle = () => setShowPlayListModal(!showPlayListModal);
 
   const handleSearchResults = (results) => setSearchResults(results);
 
@@ -79,6 +93,16 @@ const MusicList = () => {
     }
   };
 
+  const handleSelectPlaylist = (playlist) => {
+    console.log('Playlist seleccionada:', playlist);
+    // Aquí puedes añadir la lógica para manejar la playlist seleccionada
+  };
+
+  const handleOpenPlayListModal = (songId) => {
+    setSelectedSongId(songId);
+    setShowPlayListModal(true);
+  };
+
   return (
     <div>
       <div className="container mt-5">
@@ -87,71 +111,98 @@ const MusicList = () => {
           <button className="btn btn-primary" onClick={handleUploadModalToggle}>Agregar</button>
         </div>
 
-        {/* Botón para abrir el modal de búsqueda */}
         <button className="btn btn-secondary mb-3" onClick={handleSearchModalToggle}>Buscar Canciones</button>
+
+        {/* Mensaje de error */}
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
 
         {/* Resultados de búsqueda o lista de canciones */}
         <ul className="list-group">
-          {songs.map((song) => (
-            <li key={song.id} className="list-group-item d-flex justify-content-between align-items-center">
-              <div className="d-flex align-items-center">
-                <img
-                  src={song.cover || '/path/to/default-image.png'}  // Ruta a la imagen por defecto
-                  alt={song.title}
-                  style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '15px' }}
-                />
-                <div>
-                  <div>
-                    <strong>{song.title}</strong>
-                  </div>
-                  <div>{song.album ? `Album: ${song.album}` : 'No album'}</div>
-                </div>
+          {songs.length === 0 && !loading && (
+            <li className="list-group-item">
+              <div className="text-center">
+                No se encontraron canciones válidas o hay un problema con el archivo.
               </div>
-              <div>
-                <button
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() => handlePlayPause(song)}
-                >
-                  {isPlaying && audioRef.current.src === song.song_file ? 'Pause' : 'Play'}
-                </button>
-                {isPlaying && audioRef.current.src === song.song_file && (
-                  <>
-                    <button
-                      className="btn btn-outline-secondary btn-sm me-2"
-                      onClick={handleRewind}
-                    >
-                      Rewind 10s
-                    </button>
-                    <button
-                      className="btn btn-outline-secondary btn-sm me-2"
-                      onClick={handleForward}
-                    >
-                      Forward 10s
-                    </button>
-                    <div className="d-flex flex-column mt-2">
-                      <input
-                        type="range"
-                        min="0"
-                        max={audioRef.current?.duration || 0}
-                        step="0.1"
-                        value={currentTime}
-                        onChange={handleSeekChange}
-                        className="form-range mb-2"
-                        style={{ width: '200px' }}
-                      />
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
-                        value={volume}
-                        onChange={handleVolumeChange}
-                        className="form-range"
-                        style={{ width: '100px' }}
-                      />
-                    </div>
-                  </>
-                )}
+            </li>
+          )}
+          {songs.map((song) => (
+            <li key={song.id} className="list-group-item">
+              <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex">
+                  {song.cover && (
+                    <img
+                      src={song.cover}
+                      alt={`Cover of ${song.title}`}
+                      style={{ width: '50px', height: '50px', marginRight: '10px' }}
+                    />
+                  )}
+                  <div>
+                    <h5 className="mb-1">
+                      <Link to={`/songs/${song.id}`} className="text-decoration-none">
+                        {song.title}
+                      </Link>
+                    </h5>
+                    <small className="text-muted">
+                      {song.artists.join(', ')} | Album: {song.album || 'N/A'} | Year: {song.year || 'N/A'} | Duration: {song.duration ? `${song.duration} seconds` : 'N/A'}
+                    </small>
+                  </div>
+                </div>
+                <div>
+                  <button
+                    className="btn btn-outline-primary btn-sm"
+                    onClick={() => handlePlayPause(song)}
+                  >
+                    {isPlaying && audioRef.current.src === song.song_file ? 'Pause' : 'Play'}
+                  </button>
+                  {isPlaying && audioRef.current.src === song.song_file && (
+                    <>
+                      <button
+                        className="btn btn-outline-secondary btn-sm me-2"
+                        onClick={handleRewind}
+                      >
+                        Rewind 10s
+                      </button>
+                      <button
+                        className="btn btn-outline-secondary btn-sm me-2"
+                        onClick={handleForward}
+                      >
+                        Forward 10s
+                      </button>
+                      <div className="d-flex flex-column mt-2">
+                        <input
+                          type="range"
+                          min="0"
+                          max={audioRef.current?.duration || 0}
+                          step="0.1"
+                          value={currentTime}
+                          onChange={handleSeekChange}
+                          className="form-range mb-2"
+                          style={{ width: '200px' }}
+                        />
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.01"
+                          value={volume}
+                          onChange={handleVolumeChange}
+                          className="form-range"
+                          style={{ width: '100px' }}
+                        />
+                      </div>
+                    </>
+                  )}
+                  <button
+                    className="btn btn-outline-warning btn-sm mt-2"
+                    onClick={() => handleOpenPlayListModal(song.id)}
+                  >
+                    Favorito!
+                  </button>
+                </div>
               </div>
             </li>
           ))}
@@ -176,15 +227,9 @@ const MusicList = () => {
 
       <audio ref={audioRef} />
 
-      {/* Mostrar el modal de carga de canciones */}
       <UploadSongModal showModal={showUploadModal} handleModalToggle={handleUploadModalToggle} />
-
-      {/* Mostrar el modal de búsqueda */}
-      <SearchSongModal
-        showModal={showSearchModal}
-        handleModalToggle={handleSearchModalToggle}
-        setSearchResults={handleSearchResults} // Pasamos la función para actualizar los resultados de búsqueda
-      />
+      <SearchSongModal showModal={showSearchModal} handleModalToggle={handleSearchModalToggle} handleSearchResults={handleSearchResults} />
+      <SearchModalPlayList showModal={showPlayListModal} handleModalToggle={handlePlayListModalToggle} selectedSongId={selectedSongId} handleSelectPlaylist={handleSelectPlaylist} />
     </div>
   );
 };

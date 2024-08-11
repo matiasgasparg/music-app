@@ -24,87 +24,85 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
     const [selectedAlbum, setSelectedAlbum] = useState(null);
 
     useEffect(() => {
-        const fetchArtists = async () => {
-            let artistsList = [];
-            let page = 1;
-            let response;
+        if (showModal) {
+            const fetchArtists = async () => {
+                let artistsList = [];
+                let page = 1;
+                let response;
 
-            do {
                 try {
-                    response = await api.get(`/artists/?page=${page}`);
-                    artistsList = artistsList.concat(response.data.results);
-                    page++;
+                    do {
+                        response = await api.get(`/artists/?page=${page}`);
+                        artistsList = [...artistsList, ...response.data.results];
+                        page++;
+                    } while (response.data.next);
+                    setArtists(artistsList);
+                    setAllArtists(artistsList);
                 } catch (error) {
                     console.error('Error fetching artists:', error);
-                    break;
                 }
-            } while (response.data.next);
+            };
 
-            setArtists(artistsList);
-            setAllArtists(artistsList);
-        };
+            const fetchAlbums = async () => {
+                let albumsList = [];
+                let page = 1;
+                let response;
 
-        const fetchAlbums = async () => {
-            let albumsList = [];
-            let page = 1;
-            let response;
-
-            do {
                 try {
-                    response = await api.get(`/albums/?page=${page}`);
-                    albumsList = albumsList.concat(response.data.results);
-                    page++;
+                    do {
+                        response = await api.get(`/albums/?page=${page}`);
+                        albumsList = [...albumsList, ...response.data.results];
+                        page++;
+                    } while (response.data.next);
+                    setAlbums(albumsList);
+                    setAllAlbums(albumsList);
                 } catch (error) {
                     console.error('Error fetching albums:', error);
-                    break;
                 }
-            } while (response.data.next);
+            };
 
-            setAlbums(albumsList);
-            setAllAlbums(albumsList);
-        };
-
-        fetchArtists();
-        fetchAlbums();
-    }, []);
+            fetchArtists();
+            fetchAlbums();
+        }
+    }, [showModal]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSong({ ...song, [name]: value });
+        setSong(prevSong => ({ ...prevSong, [name]: value }));
     };
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file && file.size <= 3 * 1024 * 1024) { // 3MB
-            setSong({ ...song, file });
+            setSong(prevSong => ({ ...prevSong, file }));
         } else {
             alert('El archivo debe ser menor a 3MB');
         }
     };
 
-    const handleSearchChangeArtist = (e) => {
-        setSearchTermArtist(e.target.value);
-    };
-
-    const handleSearchChangeAlbum = (e) => {
-        setSearchTermAlbum(e.target.value);
-    };
+    const handleSearchChangeArtist = (e) => setSearchTermArtist(e.target.value);
+    const handleSearchChangeAlbum = (e) => setSearchTermAlbum(e.target.value);
 
     const handleSelectArtist = (artist) => {
-        setSong({ ...song, artist: [...song.artist, artist.id] }); // Agrega el ID del artista
+        setSong(prevSong => ({
+            ...prevSong,
+            artist: [...prevSong.artist, artist.id]
+        }));
         setSelectedArtist(artist);
         setSearchTermArtist(artist.name);
     };
 
     const handleSelectAlbum = (album) => {
-        setSong({ ...song, album: album.id });
+        setSong(prevSong => ({
+            ...prevSong,
+            album: album.id
+        }));
         setSelectedAlbum(album);
         setSearchTermAlbum(album.title);
     };
 
     const assignArtistsToSong = async (songId) => {
         try {
-            // Asignar cada artista a la canción
             for (const artistId of song.artist) {
                 await api.post('/song-artists/', {
                     song: songId,
@@ -132,9 +130,7 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
 
         try {
             const response = await api.post('/songs/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
             console.log('Canción subida con éxito:', response.data);
 
@@ -157,19 +153,14 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
         }
     };
 
-    const handleArtistModalToggle = () => {
-        setShowArtistModal(!showArtistModal);
-    };
+    const handleArtistModalToggle = () => setShowArtistModal(prev => !prev);
+    const handleAlbumModalToggle = () => setShowAlbumModal(prev => !prev);
 
-    const handleAlbumModalToggle = () => {
-        setShowAlbumModal(!showAlbumModal);
-    };
-
-    const filteredArtists = allArtists.filter((artist) =>
+    const filteredArtists = allArtists.filter(artist =>
         artist.name.toLowerCase().includes(searchTermArtist.toLowerCase())
     );
 
-    const filteredAlbums = allAlbums.filter((album) =>
+    const filteredAlbums = allAlbums.filter(album =>
         album.title.toLowerCase().includes(searchTermAlbum.toLowerCase())
     );
 
@@ -220,7 +211,7 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
                                 {searchTermAlbum && (
                                     <ul className="list-group mt-2">
                                         {filteredAlbums.length ? (
-                                            filteredAlbums.map((album) => (
+                                            filteredAlbums.map(album => (
                                                 <li
                                                     key={album.id}
                                                     className="list-group-item"
@@ -250,7 +241,7 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
                                 {searchTermArtist && (
                                     <ul className="list-group mt-2">
                                         {filteredArtists.length ? (
-                                            filteredArtists.map((artist) => (
+                                            filteredArtists.map(artist => (
                                                 <li
                                                     key={artist.id}
                                                     className="list-group-item"
@@ -278,9 +269,7 @@ const UploadSongModal = ({ showModal, handleModalToggle, handleUploadSong }) => 
                                     required
                                 />
                             </div>
-                            <button type="submit" className="btn btn-primary">
-                                Subir Canción
-                            </button>
+                            <button type="submit" className="btn btn-primary">Subir Canción</button>
                         </form>
                     </div>
                 </div>
