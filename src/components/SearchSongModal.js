@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import api from '../api';
 import SearchModalPlaylist from './SearchModalPlayList'; // Importa el modal
 
-const SearchSongModal = ({ showModal, handleModalToggle, handleSelectSong }) => {
+const SearchSongModal = ({ showModal, handleModalToggle }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [songs, setSongs] = useState([]);
   const [allSongs, setAllSongs] = useState([]);
   const [selectedSong, setSelectedSong] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showPlaylistModal, setShowPlaylistModal] = useState(false); // Estado para el modal de playlist
+  const [showPlaylistModal, setShowPlaylistModal] = useState(false);
 
   useEffect(() => {
     if (showModal) {
@@ -16,7 +16,7 @@ const SearchSongModal = ({ showModal, handleModalToggle, handleSelectSong }) => 
         setLoading(true); // Inicia la carga
         let songsList = [];
         let page = 1;
-        let response;
+        let response; // Definir `response` aquí
 
         try {
           do {
@@ -45,7 +45,6 @@ const SearchSongModal = ({ showModal, handleModalToggle, handleSelectSong }) => 
   const onSongSelect = (song) => {
     console.log('Selected song:', song); // Verifica que el objeto canción tiene la ID
     setSelectedSong(song); // Almacena toda la información de la canción seleccionada, incluyendo el ID
-
     setSearchTerm(''); // Borra el término de búsqueda
   };
 
@@ -61,10 +60,12 @@ const SearchSongModal = ({ showModal, handleModalToggle, handleSelectSong }) => 
   const handleClosePlaylistModal = () => {
     setShowPlaylistModal(false); // Cierra el modal de playlist
   };
+
   const handleSelectPlaylist = (playlist) => {
     console.log('Playlist seleccionada:', playlist);
     // Aquí puedes añadir la lógica para manejar la playlist seleccionada
   };
+
   const filteredSongs = allSongs.filter((song) =>
     song.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -142,12 +143,12 @@ const SearchSongModal = ({ showModal, handleModalToggle, handleSelectSong }) => 
 
       {/* Modal para buscar y seleccionar playlist */}
       {showPlaylistModal && (
-           <SearchModalPlaylist
-           showModal={showPlaylistModal}
-           handleModalToggle={handleClosePlaylistModal}
-           handleSelectPlaylist={handleSelectPlaylist} // Asegúrate de que esta función esté definida y pasada correctamente
-           selectedSongId={selectedSong ? selectedSong.id : null} // Solo pasar la ID
-          />
+        <SearchModalPlaylist
+          showModal={showPlaylistModal}
+          handleModalToggle={handleClosePlaylistModal}
+          handleSelectPlaylist={handleSelectPlaylist} // Asegúrate de que esta función esté definida y pasada correctamente
+          songId={selectedSong?.id} // Solo pasar la ID
+        />
       )}
     </div>
   );

@@ -229,7 +229,7 @@ const MusicList = () => {
 
       <UploadSongModal showModal={showUploadModal} handleModalToggle={handleUploadModalToggle} />
       <SearchSongModal showModal={showSearchModal} handleModalToggle={handleSearchModalToggle} handleSearchResults={handleSearchResults} />
-      <SearchModalPlayList showModal={showPlayListModal} handleModalToggle={handlePlayListModalToggle} selectedSongId={selectedSongId} handleSelectPlaylist={handleSelectPlaylist} />
+      <SearchModalPlayList showModal={showPlayListModal} handleModalToggle={handlePlayListModalToggle} songId={selectedSongId} handleSelectPlaylist={handleSelectPlaylist} />
     </div>
   );
 };

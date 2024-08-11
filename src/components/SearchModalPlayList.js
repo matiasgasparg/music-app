@@ -10,6 +10,8 @@ const SearchModalPlayList = ({ showModal, handleModalToggle, handleSelectPlaylis
   useEffect(() => {
     if (showModal) {
       const fetchPlaylists = async () => {
+        console.log('ID DE LA CANCION DENTRO DEL MODAL:', songId); // Verifica que la ID se pasa correctamente
+
         let playlistsList = [];
         let page = 1;
         let response;
