@@ -1,23 +1,66 @@
+/**
+ * CreatePlaylistModal.js
+ *
+ * Este componente representa un modal para crear una nueva lista de reproducción. Permite al usuario ingresar 
+ * el nombre y la descripción de la lista de reproducción, y maneja la creación de la lista a través de una 
+ * solicitud POST a la API. El modal se controla mediante el estado `showModal`, que determina si debe ser visible o no.
+ * 
+ * Props:
+ * - showModal (boolean): Determina si el modal debe ser visible o no.
+ * - handleModalToggle (function): Función para alternar la visibilidad del modal.
+ * 
+ * Estado:
+ * - name (string): Nombre de la lista de reproducción que el usuario ingresa.
+ * - description (string): Descripción de la lista de reproducción que el usuario ingresa.
+ * - error (string|null): Mensaje de error en caso de que falle la creación de la lista de reproducción.
+ * 
+ * Funciones principales:
+ * - handleCreatePlaylist: Envía una solicitud POST a la API para crear una nueva lista de reproducción y maneja
+ *   el estado del modal en función del resultado de la solicitud.
+ * - handleModalContentClick: Evita que el clic en el contenido del modal cierre el modal.
+ * 
+ * Ejemplo de uso:
+ * <CreatePlaylistModal
+ *   showModal={showModal}
+ *   handleModalToggle={handleModalToggle}
+ * />
+ */
+
 import React, { useState } from 'react';
-import api from '../api';
+import api from '../api'; // Importa el cliente API configurado
 
 const CreatePlaylistModal = ({ showModal, handleModalToggle }) => {
+  // Estado para el nombre de la lista de reproducción
   const [name, setName] = useState('');
+  
+  // Estado para la descripción de la lista de reproducción
   const [description, setDescription] = useState('');
+  
+  // Estado para manejar errores durante la creación de la lista de reproducción
   const [error, setError] = useState(null);
 
+  /**
+   * Maneja la creación de la lista de reproducción.
+   * Envía una solicitud POST a la API para crear la lista con el nombre y descripción proporcionados.
+   * 
+   * @async
+   */
   const handleCreatePlaylist = async () => {
     try {
-      await api.post('/playlists/', { name, description });
-      handleModalToggle(); // Cierra el modal después de la creación exitosa
+      await api.post('/playlists/', { name, description }); // Envía la solicitud a la API
+      handleModalToggle(); // Cierra el modal después de una creación exitosa
     } catch (error) {
-      setError('Failed to create playlist.');
+      setError('Failed to create playlist.'); // Establece el mensaje de error si la solicitud falla
     }
   };
 
-  // Evita que el clic en el contenido del modal cierre el modal
+  /**
+   * Evita que el clic en el contenido del modal cierre el modal.
+   * 
+   * @param {React.MouseEvent} e - Evento de clic.
+   */
   const handleModalContentClick = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Previene el cierre del modal al hacer clic en su contenido
   };
 
   return (

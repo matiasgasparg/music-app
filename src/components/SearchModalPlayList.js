@@ -1,3 +1,41 @@
+/**
+ * SearchModalPlayList.js
+ *
+ * Este componente representa un modal para buscar y seleccionar listas de reproducción (playlists). Permite al
+ * usuario buscar playlists por nombre y seleccionar una para agregar una canción a esa lista. La selección de la
+ * playlist también envía una entrada a la API.
+ *
+ * Props:
+ * - `showModal` (boolean): Determina si el modal debe estar visible o no.
+ * - `handleModalToggle` (function): Función para alternar la visibilidad del modal.
+ * - `handleSelectPlaylist` (function): Función que se llama cuando se selecciona una playlist.
+ * - `songId` (number): ID de la canción que se desea agregar a la playlist.
+ *
+ * Estado:
+ * - `playlists` (array): Lista de playlists cargadas desde la API.
+ * - `allPlaylists` (array): Lista completa de playlists para realizar búsquedas.
+ * - `searchTerm` (string): Término de búsqueda para filtrar las playlists.
+ * - `selectedPlaylist` (object|null): Playlist actualmente seleccionada.
+ * - `loading` (boolean): Estado que indica si se están cargando las playlists.
+ *
+ * Efectos secundarios:
+ * - `useEffect`: Carga todas las playlists desde la API cuando el modal se muestra (`showModal` es `true`).
+ *
+ * Funciones:
+ * - `fetchPlaylists`: Obtiene todas las playlists desde la API, manejando la paginación.
+ * - `handleSearchChange`: Actualiza el término de búsqueda.
+ * - `handleSelect`: Maneja la selección de una playlist, cierra el modal y envía la entrada a la API.
+ * - `filteredPlaylists`: Filtra las playlists basadas en el término de búsqueda.
+ *
+ * Ejemplo de uso:
+ * <SearchModalPlayList
+ *   showModal={true}
+ *   handleModalToggle={() => {}}
+ *   handleSelectPlaylist={(playlist) => {}}
+ *   songId={123}
+ * />
+ */
+
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 

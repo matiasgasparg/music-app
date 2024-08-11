@@ -1,6 +1,44 @@
+/**
+ * SearchSongModal.js
+ *
+ * Este componente representa un modal para buscar canciones y seleccionar una para agregarla a una lista de reproducción. 
+ * Permite al usuario buscar canciones por título, seleccionar una canción, reproducirla, y luego abrir un modal para 
+ * seleccionar una lista de reproducción a la cual agregar la canción seleccionada.
+ *
+ * Props:
+ * - `showModal` (boolean): Determina si el modal debe estar visible o no.
+ * - `handleModalToggle` (function): Función para alternar la visibilidad del modal.
+ *
+ * Estado:
+ * - `searchTerm` (string): Término de búsqueda para filtrar las canciones.
+ * - `songs` (array): Lista de canciones cargadas desde la API.
+ * - `allSongs` (array): Lista completa de canciones para realizar búsquedas.
+ * - `selectedSong` (object|null): Canción actualmente seleccionada.
+ * - `loading` (boolean): Estado que indica si se están cargando las canciones.
+ * - `showPlaylistModal` (boolean): Determina si el modal de listas de reproducción debe estar visible o no.
+ *
+ * Efectos secundarios:
+ * - `useEffect`: Carga todas las canciones desde la API cuando el modal se muestra (`showModal` es `true`).
+ *
+ * Funciones:
+ * - `fetchSongs`: Obtiene todas las canciones desde la API, manejando la paginación.
+ * - `handleSearchChange`: Actualiza el término de búsqueda.
+ * - `onSongSelect`: Maneja la selección de una canción y muestra el botón para agregar a la lista de reproducción.
+ * - `handleOpenPlaylistModal`: Abre el modal de listas de reproducción si se ha seleccionado una canción.
+ * - `handleClosePlaylistModal`: Cierra el modal de listas de reproducción.
+ * - `handleSelectPlaylist`: Función que se llama cuando se selecciona una lista de reproducción.
+ * - `filteredSongs`: Filtra las canciones basadas en el término de búsqueda.
+ *
+ * Ejemplo de uso:
+ * <SearchSongModal
+ *   showModal={true}
+ *   handleModalToggle={() => {}}
+ * />
+ */
+
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import SearchModalPlaylist from './SearchModalPlayList'; // Importa el modal
+import SearchModalPlaylist from './SearchModalPlayList'; // Importa el modal de playlists
 
 const SearchSongModal = ({ showModal, handleModalToggle }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,7 +54,7 @@ const SearchSongModal = ({ showModal, handleModalToggle }) => {
         setLoading(true); // Inicia la carga
         let songsList = [];
         let page = 1;
-        let response; // Definir `response` aquí
+        let response;
 
         try {
           do {
@@ -58,7 +96,7 @@ const SearchSongModal = ({ showModal, handleModalToggle }) => {
   };
 
   const handleClosePlaylistModal = () => {
-    setShowPlaylistModal(false); // Cierra el modal de playlist
+    setShowPlaylistModal(false); // Cierra el modal de playlists
   };
 
   const handleSelectPlaylist = (playlist) => {
@@ -146,7 +184,7 @@ const SearchSongModal = ({ showModal, handleModalToggle }) => {
         <SearchModalPlaylist
           showModal={showPlaylistModal}
           handleModalToggle={handleClosePlaylistModal}
-          handleSelectPlaylist={handleSelectPlaylist} // Asegúrate de que esta función esté definida y pasada correctamente
+          handleSelectPlaylist={handleSelectPlaylist}
           songId={selectedSong?.id} // Solo pasar la ID
         />
       )}

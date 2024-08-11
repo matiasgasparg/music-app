@@ -1,20 +1,34 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { fetchSongById } from '../api'; // Importar la nueva función
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../CSS/WelcomePage.css';
-import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import manImage from '../Resources/assets/images/man.png';
+import { fetchSongById } from '../api'; // Importar la función para obtener la canción por ID
+import 'bootstrap/dist/css/bootstrap.min.css'; // Importar estilos de Bootstrap
+import '../CSS/WelcomePage.css'; // Importar estilos personalizados para la WelcomePage
+import { useAuth } from '../contexts/AuthContext'; // Importar el contexto de autenticación
+import { Link } from 'react-router-dom'; // Importar Link para la navegación
+import manImage from '../Resources/assets/images/man.png'; // Importar imagen para la WelcomePage
 
+/**
+ * Componente de la página de bienvenida.
+ * 
+ * Muestra una página de bienvenida con un reproductor de audio y un botón de login.
+ * 
+ * El reproductor de audio permite reproducir, pausar, adelantar y retroceder una canción específica.
+ * Si el usuario no está autenticado, se muestra un botón de login.
+ * 
+ * @returns {JSX.Element} El componente WelcomePage.
+ */
 const WelcomePage = () => {
-  const [song, setSong] = useState(null);
-  const { currentUser } = useAuth(); 
-  const [currentSong, setCurrentSong] = useState(null);
-  const [volume, setVolume] = useState(1);
-  const [currentTime, setCurrentTime] = useState(0); // Tiempo actual
-  const [duration, setDuration] = useState(0); // Duración total
-  const audioRef = useRef(null);
+  const [song, setSong] = useState(null); // Estado para almacenar la canción obtenida
+  const { currentUser } = useAuth(); // Obtener el usuario actual desde el contexto de autenticación
+  const [currentSong, setCurrentSong] = useState(null); // Estado para la canción actualmente en reproducción
+  const [volume, setVolume] = useState(1); // Estado para el volumen del audio
+  const [currentTime, setCurrentTime] = useState(0); // Tiempo actual del audio
+  const [duration, setDuration] = useState(0); // Duración total del audio
+  const audioRef = useRef(null); // Referencia al elemento de audio
 
+  /**
+   * Efecto que se ejecuta al montar el componente.
+   * Obtiene una canción específica por ID y la almacena en el estado.
+   */
   useEffect(() => {
     const getSongById = async () => {
       try {
@@ -30,6 +44,10 @@ const WelcomePage = () => {
     getSongById();
   }, []);
 
+  /**
+   * Efecto que se ejecuta cada vez que cambia la referencia del audio.
+   * Actualiza el tiempo actual y la duración del audio en el estado.
+   */
   useEffect(() => {
     if (audioRef.current) {
       const audioElement = audioRef.current;
@@ -46,6 +64,10 @@ const WelcomePage = () => {
     }
   }, [audioRef.current]);
 
+  /**
+   * Maneja el clic en el botón de reproducción.
+   * Reproduce o pausa la canción actual dependiendo de su estado.
+   */
   const handlePlayClick = () => {
     if (currentSong) {
       if (audioRef.current) {
@@ -70,18 +92,32 @@ const WelcomePage = () => {
     }
   };
 
+  /**
+   * Maneja el clic en el botón de rebobinado.
+   * Rebobina el audio 10 segundos.
+   */
   const handleRewind = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 10);
     }
   };
 
+  /**
+   * Maneja el clic en el botón de avance.
+   * Avanza el audio 10 segundos.
+   */
   const handleForward = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = Math.min(duration, audioRef.current.currentTime + 10);
     }
   };
 
+  /**
+   * Maneja el cambio en el control de volumen.
+   * Ajusta el volumen del audio.
+   * 
+   * @param {Object} e - Evento del cambio en el control de volumen.
+   */
   const handleVolumeChange = (e) => {
     const newVolume = e.target.value;
     setVolume(newVolume);
@@ -90,6 +126,12 @@ const WelcomePage = () => {
     }
   };
 
+  /**
+   * Maneja el cambio en el control de búsqueda.
+   * Ajusta el tiempo actual del audio basado en la búsqueda.
+   * 
+   * @param {Object} e - Evento del cambio en el control de búsqueda.
+   */
   const handleSeek = (e) => {
     const newTime = (e.target.value / 100) * duration;
     if (audioRef.current) {

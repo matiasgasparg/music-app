@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getProfile, updateProfile, updateProfileImage } from '../api';
+import { fetchUserProfile, submitUserProfileUpdate, submitProfileImageUpdate } from '../api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../CSS/Profile.css';
 
+/**
+ * Componente Profile
+ * 
+ * Este componente maneja la visualización y edición del perfil de usuario.
+ * Permite a los usuarios ver su información de perfil, editar sus datos
+ * y cambiar su imagen de perfil. Las operaciones relacionadas con la API 
+ * se manejan en el archivo `api.js`.
+ */
 const Profile = () => {
+  // Obtener el usuario actual desde el contexto de autenticación
   const { currentUser } = useAuth();
+  
+  // Estados locales para manejar el perfil del usuario, el estado de edición y la imagen de perfil
   const [profile, setProfile] = useState({
     user__id: '',
     username: '',
@@ -18,74 +29,81 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [imageChanged, setImageChanged] = useState(false);
 
+  /**
+   * useEffect para cargar el perfil del usuario cuando se monta el componente.
+   * 
+   * Si hay un usuario autenticado, se llama a `fetchUserProfile` desde `api.js`
+   * para obtener los datos del perfil y actualizar el estado local.
+   */
   useEffect(() => {
-    const fetchProfile = async () => {
+    const loadProfile = async () => {
       try {
-        const data = await getProfile();
-        setProfile({
-          user__id: data.user__id,
-          username: data.username,
-          email: data.email,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          image: data.image, // Ajusta si `image` es una URL completa o una ruta
-        });
-        setOriginalProfile({
-          user__id: data.user__id,
-          username: data.username,
-          email: data.email,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          image: data.image,
-        });
+        const data = await fetchUserProfile();
+        setProfile(data);
+        setOriginalProfile(data);
       } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error loading profile:', error);
       }
     };
 
     if (currentUser) {
-      fetchProfile();
+      loadProfile();
     }
   }, [currentUser]);
 
+  /**
+   * handleChange
+   * 
+   * Función para manejar los cambios en los campos de texto del formulario.
+   * Actualiza el estado del perfil a medida que el usuario edita su información.
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProfile((prevProfile) => ({ ...prevProfile, [name]: value }));
   };
 
+  /**
+   * handleImageChange
+   * 
+   * Función para manejar los cambios en la selección de imagen de perfil.
+   * Actualiza el estado de la imagen y marca que ha habido un cambio en la imagen.
+   */
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setProfile((prevProfile) => ({ ...prevProfile, image: file }));
     setImageChanged(true);
   };
 
+  /**
+   * handleProfileSubmit
+   * 
+   * Función para manejar la actualización del perfil cuando el usuario
+   * envía el formulario de edición. Se llama a `submitUserProfileUpdate`
+   * desde `api.js` para enviar los datos actualizados.
+   */
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      formData.append('username', profile.username || originalProfile.username);
-      formData.append('email', profile.email || originalProfile.email);
-      formData.append('first_name', profile.first_name || originalProfile.first_name);
-      formData.append('last_name', profile.last_name || originalProfile.last_name);
-
-      // Solo añadir los campos que cambian (sin incluir la imagen)
-      // Enviar actualización del perfil
-      await updateProfile(profile.user__id, formData);
-
+      await submitUserProfileUpdate(profile.user__id, profile, originalProfile);
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
     }
   };
 
+  /**
+   * handleImageSubmit
+   * 
+   * Función para manejar la actualización de la imagen de perfil cuando
+   * el usuario envía el formulario de imagen. Se llama a `submitProfileImageUpdate`
+   * desde `api.js` para enviar la nueva imagen.
+   */
   const handleImageSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
       if (profile.image) {
-        formData.append('image', profile.image);
-        const response = await updateProfileImage(`https://sandbox.academiadevelopers.com/users/profiles/${profile.user__id}/`, formData);
-        console.log('Image upload response:', response); // Añade esta línea para depurar la respuesta
+        const response = await submitProfileImageUpdate(profile.user__id, profile.image);
+        console.log('Image upload response:', response);
       }
     } catch (error) {
       console.error('Error updating profile image:', error);

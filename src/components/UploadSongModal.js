@@ -1,3 +1,48 @@
+/**
+ * Componente `UploadSongModal`
+ * 
+ * Este componente es un modal para subir una nueva canción. Permite al usuario introducir los detalles de la canción,
+ * seleccionar un álbum y artista existente, o agregar nuevos álbumes y artistas mediante modales adicionales.
+ * 
+ * Props:
+ * - `showModal` (boolean): Determina si el modal está visible o no.
+ * - `handleModalToggle` (función): Función que alterna la visibilidad del modal.
+ * - `handleUploadSong` (función): Función de callback que se llama después de subir una canción.
+ * 
+ * Estado:
+ * - `song` (objeto): Datos de la canción a subir, incluyendo título, año, álbum, artista y archivo.
+ * - `albums` (array): Lista de álbumes obtenidos de la API.
+ * - `artists` (array): Lista de artistas obtenidos de la API.
+ * - `allAlbums` (array): Lista completa de álbumes para búsqueda.
+ * - `allArtists` (array): Lista completa de artistas para búsqueda.
+ * - `showArtistModal` (boolean): Determina si el modal para agregar un artista está visible.
+ * - `showAlbumModal` (boolean): Determina si el modal para agregar un álbum está visible.
+ * - `searchTermArtist` (string): Término de búsqueda para artistas.
+ * - `searchTermAlbum` (string): Término de búsqueda para álbumes.
+ * - `selectedArtist` (objeto|null): Artista seleccionado.
+ * - `selectedAlbum` (objeto|null): Álbum seleccionado.
+ * 
+ * Efectos secundarios:
+ * - Se ejecuta cuando `showModal` cambia, recuperando los artistas y álbumes disponibles.
+ * 
+ * Métodos:
+ * - `handleChange`: Maneja cambios en los campos de texto del formulario.
+ * - `handleFileChange`: Maneja la carga del archivo de canción.
+ * - `handleSearchChangeArtist`: Maneja cambios en el término de búsqueda de artistas.
+ * - `handleSearchChangeAlbum`: Maneja cambios en el término de búsqueda de álbumes.
+ * - `handleSelectArtist`: Maneja la selección de un artista de la lista de búsqueda.
+ * - `handleSelectAlbum`: Maneja la selección de un álbum de la lista de búsqueda.
+ * - `assignArtistsToSong`: Asigna los artistas seleccionados a la canción subiendo datos a la API.
+ * - `handleSubmit`: Maneja la presentación del formulario para subir la canción.
+ * - `handleArtistModalToggle`: Alterna la visibilidad del modal de agregar artista.
+ * - `handleAlbumModalToggle`: Alterna la visibilidad del modal de agregar álbum.
+ * 
+ * Renderiza:
+ * - Un formulario para ingresar los detalles de la canción.
+ * - Listas filtradas de artistas y álbumes con opciones para buscar y seleccionar.
+ * - Botones para agregar nuevos álbumes y artistas.
+ * - Modales adicionales para agregar álbumes y artistas.
+ */
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import AddArtistModal from './AddArtistModal';
