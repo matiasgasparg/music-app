@@ -50,20 +50,17 @@ export const updateProfile = async (id, formData) => {
 };
 
 
-export const fetchRandomSong = async () => {
+export const fetchSongById = async (id) => {
   try {
-    const response = await api.get('/songs/');
-    const { results } = response.data;
-    const randomIndex = Math.floor(Math.random() * results.length);
-    console.log('Selected song:', results[randomIndex]); // Verifica la canción seleccionada
-    return results[randomIndex];
+    const response = await api.get(`/songs/${id}/`);
+    const song = response.data;
+    console.log('Fetched song:', song); // Verifica la canción seleccionada
+    return song;
   } catch (error) {
-    console.error('Error fetching random song:', error.response ? error.response.data : error.message);
+    console.error('Error fetching song by ID:', error.response ? error.response.data : error.message);
     throw error;
   }
 };
-
-// Add a request interceptor to include the token in the headers
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');

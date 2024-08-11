@@ -4,34 +4,44 @@
     border-bottom: 1px solid rgba(250, 140, 36, 0.2); /* Ligeramente más oscuro para el borde */
   }
   
-  .navbar-custom .nav-link {
-    color: #333; /* Color del texto de los enlaces */
+.navbar-custom .container-fluid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 0;
+    padding-right: 0;
 }
 
-.navbar-custom .nav-link:hover {
-    color: #000; /* Color del texto al pasar el ratón sobre los enlaces */
+.navbar-custom .navbar-brand {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
 }
 
 .navbar-custom .navbar-brand img {
     height: 90px; /* Ajusta la altura según sea necesario */
     width: auto; /* Mantiene la proporción del logo */
-}
-
-/* Asegura que el navbar esté centrado */
-.navbar-custom .container-fluid {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0 auto; /* Centrar el logo */
 }
 
 .navbar-custom .navbar-collapse {
+    flex-grow: 1;
     display: flex;
     justify-content: center;
-    width: 100%;
 }
 
 .navbar-custom .navbar-nav {
     display: flex;
-    justify-content: center;
-    width: 100%;
+    gap: 1.5rem; /* Espacio entre los enlaces, similar al de la imagen */
+}
+.navbar-custom .nav-link {
+    color: #333; /* Mantener el color del texto */
+    font-size: 16px; /* Ajustar el tamaño de la fuente según la imagen proporcionada */
+    font-weight: 600; /* Similar al estilo en negrita de la imagen */
+}
+.navbar-custom .nav-link:hover {
+    color: #000; /* Mantener el efecto hover */
+}
+.navbar-custom .nav-link.active {
+    color: #ff4500; /* Color diferente para el enlace activo */
 }

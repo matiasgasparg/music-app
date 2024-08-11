@@ -1,10 +1,65 @@
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
 .player-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    text-align: center;
-  }
-  
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: none;
+  background-color: #ffffff;
+}
+
+.card-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.play-button {
+  font-size: 1.5rem; 
+  padding: 20px 40px; 
+  border-radius: 50px; 
+  transition: background-color 0.3s ease;
+}
+
+.playing {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Estilo para la card de login */
+.login-card {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-card .card-body {
+  padding: 20px;
+}
+
+.login-card h4 {
+  margin-bottom: 20px;
+}
+
+.login-card .btn {
+  margin-top: 10px;
+}
