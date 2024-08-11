@@ -1,11 +1,16 @@
 import React from 'react';
+import { Link } from './Link';
 
 const NotFound = () => {
-  return (
-    <div>
-      <h1>404 - Not Found</h1>
-      <p>Por desgracia @mateo olvidido programar esta parte :B</p>
-    </div>
+  return React.createElement(
+    'div',
+    null,
+    React.createElement('h1', null, '404 - This is NOT fine'),
+    React.createElement('img', {
+      src: 'https://midu.dev/images/this-is-fine-404.gif',
+      alt: 'This is NOT Fine Matias'
+    }),
+    React.createElement(Link, { to: '/' }, 'Volver al inicio')
   );
 };
 
