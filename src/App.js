@@ -37,7 +37,7 @@ function App() {
           <Route path="/artists" element={<PrivateRoute component={ArtistList} />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/AlbumList" element={<PrivateRoute component={AlbumList} />} />
-
+          
           <Route exact path="/" element={<WelcomePage />} />
           <Route path="*" element={<NotFound />} /> 
         </Routes>
