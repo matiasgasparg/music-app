@@ -17,7 +17,7 @@ Despliegue: Firebase Hosting
 
 
 Clona el repositorio:
-git clone https://github.com/tu-usuario/music-app.git
+git clone https://github.com/matiasgasparg/music-app.git
 
 Navega a la carpeta del proyecto:
 cd music-app
